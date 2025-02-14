@@ -19,42 +19,44 @@
         <label for="username">In-Game Username:</label>
         <input type="text" id="username" name="username" placeholder="Your Game Name" required>
 
-        <!-- Unit Selection -->
-        <div class="unit-container">
-            <img src="https://raw.githubusercontent.com/CONWORLDSOFFICIAL/CON-WORLDS-Unit-Selection/main/sasf.png" alt="SASF">
-            <label>Stealth Air Superiority Fighter (SASF)</label>
-            <input type="range" id="sasf" min="0" max="50" value="0">
-            <span id="sasfValue">0</span>
-        </div>
+        <!-- Unit Selection (Now in Rows of 3) -->
+        <div class="unit-grid">
+            <div class="unit-container">
+                <img src="https://raw.githubusercontent.com/CONWORLDSOFFICIAL/CON-WORLDS-Unit-Selection/main/sasf.png" alt="SASF">
+                <label>Stealth Air Superiority Fighter (SASF)</label>
+                <input type="range" id="sasf" min="0" max="50" value="0">
+                <span id="sasfValue">0</span>
+            </div>
 
-        <div class="unit-container">
-            <img src="https://raw.githubusercontent.com/CONWORLDSOFFICIAL/CON-WORLDS-Unit-Selection/main/mrl.png" alt="MRL">
-            <label>Multiple Rocket Launcher (MRL)</label>
-            <input type="range" id="mrl" min="0" max="50" value="0">
-            <span id="mrlValue">0</span>
-        </div>
+            <div class="unit-container">
+                <img src="https://raw.githubusercontent.com/CONWORLDSOFFICIAL/CON-WORLDS-Unit-Selection/main/mrl.png" alt="MRL">
+                <label>Multiple Rocket Launcher (MRL)</label>
+                <input type="range" id="mrl" min="0" max="50" value="0">
+                <span id="mrlValue">0</span>
+            </div>
 
-        <div class="unit-container">
-            <img src="https://raw.githubusercontent.com/CONWORLDSOFFICIAL/CON-WORLDS-Unit-Selection/main/tds.png" alt="TDS">
-            <label>Theater Defense System (TDS)</label>
-            <input type="range" id="tds" min="0" max="50" value="0">
-            <span id="tdsValue">0</span>
-        </div>
+            <div class="unit-container">
+                <img src="https://raw.githubusercontent.com/CONWORLDSOFFICIAL/CON-WORLDS-Unit-Selection/main/tds.png" alt="TDS">
+                <label>Theater Defense System (TDS)</label>
+                <input type="range" id="tds" min="0" max="50" value="0">
+                <span id="tdsValue">0</span>
+            </div>
 
-        <div class="unit-container">
-            <img src="https://raw.githubusercontent.com/CONWORLDSOFFICIAL/CON-WORLDS-Unit-Selection/main/ah.png" alt="AH">
-            <label>Attack Helicopter (AH)</label>
-            <input type="range" id="ah" min="0" max="50" value="0">
-            <span id="ahValue">0</span>
+            <div class="unit-container">
+                <img src="https://raw.githubusercontent.com/CONWORLDSOFFICIAL/CON-WORLDS-Unit-Selection/main/ah.png" alt="AH">
+                <label>Attack Helicopter (AH)</label>
+                <input type="range" id="ah" min="0" max="50" value="0">
+                <span id="ahValue">0</span>
+            </div>
         </div>
 
         <!-- Live Resource Tracker -->
         <h2>Resource Usage</h2>
         <table>
             <tr><th>Resource</th><th>Used</th><th>Limit</th></tr>
-            <tr><td>Electronics</td><td id="usedElectronics">0</td><td>40000</td></tr>
-            <tr><td>Supplies</td><td id="usedSupplies">0</td><td>40000</td></tr>
-            <tr><td>Components</td><td id="usedComponents">0</td><td>40000</td></tr>
+            <tr><td>Electronics</td><td id="usedElectronics">0</td><td>40,000</td></tr>
+            <tr><td>Supplies</td><td id="usedSupplies">0</td><td>40,000</td></tr>
+            <tr><td>Components</td><td id="usedComponents">0</td><td>40,000</td></tr>
         </table>
 
         <br>
@@ -69,18 +71,17 @@
         import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
-          apiKey: "AIzaSyArxYCguc3tHkx_R25E1l8aPffnDZjgodE",
-          authDomain: "con-worlds-unit-selection.firebaseapp.com",
-          projectId: "con-worlds-unit-selection",
-          storageBucket: "con-worlds-unit-selection.firebasestorage.app",
-          messagingSenderId: "1056963708496",
-          appId: "1:1056963708496:web:09c7e564bc2d06ed4ef355",
-          measurementId: "G-P7TXFN0PDQ"
+            apiKey: "AIzaSyArxYCguc3tHkx_R25E1l8aPffnDZjgodE",
+            authDomain: "con-worlds-unit-selection.firebaseapp.com",
+            projectId: "con-worlds-unit-selection",
+            storageBucket: "con-worlds-unit-selection.appspot.com",
+            messagingSenderId: "1056963708496",
+            appId: "1:1056963708496:web:09c7e564bc2d06ed4ef355",
+            measurementId: "G-P7TXFN0PDQ"
         };
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Function to update live resource tracking
         function updateResources() {
             const unitCosts = {
                 sasf: { electronics: 1600, components: 1500, supplies: 0 },
@@ -94,35 +95,41 @@
             const tds = parseInt(document.getElementById("tds").value);
             const ah = parseInt(document.getElementById("ah").value);
 
-            // Update slider values
             document.getElementById("sasfValue").innerText = sasf;
             document.getElementById("mrlValue").innerText = mrl;
             document.getElementById("tdsValue").innerText = tds;
             document.getElementById("ahValue").innerText = ah;
 
-            // Update resource usage
             document.getElementById("usedElectronics").innerText =
-                sasf * unitCosts.sasf.electronics +
-                mrl * unitCosts.mrl.electronics +
-                tds * unitCosts.tds.electronics +
-                ah * unitCosts.ah.electronics;
+                sasf * unitCosts.sasf.electronics + mrl * unitCosts.mrl.electronics +
+                tds * unitCosts.tds.electronics + ah * unitCosts.ah.electronics;
 
             document.getElementById("usedSupplies").innerText =
-                sasf * unitCosts.sasf.supplies +
-                mrl * unitCosts.mrl.supplies +
-                tds * unitCosts.tds.supplies +
-                ah * unitCosts.ah.supplies;
+                sasf * unitCosts.sasf.supplies + mrl * unitCosts.mrl.supplies +
+                tds * unitCosts.tds.supplies + ah * unitCosts.ah.supplies;
 
             document.getElementById("usedComponents").innerText =
-                sasf * unitCosts.sasf.components +
-                mrl * unitCosts.mrl.components +
-                tds * unitCosts.tds.components +
-                ah * unitCosts.ah.components;
+                sasf * unitCosts.sasf.components + mrl * unitCosts.mrl.components +
+                tds * unitCosts.tds.components + ah * unitCosts.ah.components;
         }
 
-        // Attach event listeners to sliders **AFTER** defining updateResources()
         document.querySelectorAll("input[type=range]").forEach(slider => {
             slider.addEventListener("input", updateResources);
+        });
+
+        document.getElementById("unitForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+
+            if (parseInt(document.getElementById("usedElectronics").innerText) > 40000 ||
+                parseInt(document.getElementById("usedSupplies").innerText) > 40000 ||
+                parseInt(document.getElementById("usedComponents").innerText) > 40000) {
+                document.getElementById("warning").innerText = "Error: Resource limit exceeded!";
+                document.getElementById("warning").style.color = "red";
+                return;
+            }
+
+            document.getElementById("warning").innerText = "Submission successful!";
+            document.getElementById("warning").style.color = "green";
         });
 
     </script>
