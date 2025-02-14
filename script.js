@@ -51,6 +51,18 @@ document.getElementById("unitForm").addEventListener("submit", function(event) {
     } else {
         document.getElementById("warning").innerText = "Submission successful!";
 
+      
+    db.collection("submissions").add({
+        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+        sasf: sasf,
+        mrl: mrl,
+        tds: tds,
+        ah: ah
+    })
+    .then(() => document.getElementById("warning").innerText = "Submission successful!")
+    .catch(error => console.error("Error adding document: ", error));
+
+      
         // Send Data to Google Sheets
         fetch("https://script.google.com/macros/s/AKfycbw7wjdgRUTQ1lku-w6Hb-meBUaOANUE82LoECakKJw5E5L-LVr1-BJLEhx8kKBpxUg_yA/exec", {
             method: "POST",
