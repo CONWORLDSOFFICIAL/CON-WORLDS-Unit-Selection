@@ -57,8 +57,53 @@
 
     <p id="warning" class="warning"></p>
     
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"></script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyArxYCguc3tHkx_R25E1l8aPffnDZjgodE",
+            authDomain: "con-worlds-unit-selection.firebaseapp.com",
+            projectId: "con-worlds-unit-selection",
+            storageBucket: "con-worlds-unit-selection.appspot.com",
+            messagingSenderId: "1056963708496",
+            appId: "1:1056963708496:web:09c7e564bc2d06ed4ef355",
+            measurementId: "G-P7TXFN0PDQ"
+        };
+    
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+    
+        // Attach event listener to form
+        document.getElementById("unitForm").addEventListener("submit", async function(event) {
+            event.preventDefault(); // Prevent form reload
+    
+            // Get user selections
+            const sasf = parseInt(document.getElementById("sasf").value);
+            const mrl = parseInt(document.getElementById("mrl").value);
+            const tds = parseInt(document.getElementById("tds").value);
+            const ah = parseInt(document.getElementById("ah").value);
+    
+            try {
+                // Send data to Firestore
+                await addDoc(collection(db, "submissions"), {
+                    timestamp: serverTimestamp(),
+                    sasf: sasf,
+                    mrl: mrl,
+                    tds: tds,
+                    ah: ah
+                });
+    
+                document.getElementById("warning").innerText = "Submission successful!";
+                console.log("Data added successfully!");
+            } catch (error) {
+                document.getElementById("warning").innerText = "Error saving data.";
+                console.error("Error adding document:", error);
+            }
+        });
+    </script>
     <script src="script.js"></script>
 </body>
 </html>
