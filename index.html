@@ -19,32 +19,32 @@
         <label for="username">In-Game Username:</label>
         <input type="text" id="username" name="username" placeholder="Your Game Name" required>
 
-        <!-- Unit Selection (Now in Rows of 3) -->
+        <!-- Unit Selection -->
         <div class="unit-grid">
             <div class="unit-container">
                 <img src="https://raw.githubusercontent.com/CONWORLDSOFFICIAL/CON-WORLDS-Unit-Selection/main/sasf.png" alt="SASF">
-                <label>Stealth Air Superiority Fighter (SASF)</label>
+                <label>SASF</label>
                 <input type="range" id="sasf" min="0" max="50" value="0">
                 <span id="sasfValue">0</span>
             </div>
 
             <div class="unit-container">
                 <img src="https://raw.githubusercontent.com/CONWORLDSOFFICIAL/CON-WORLDS-Unit-Selection/main/mrl.png" alt="MRL">
-                <label>Multiple Rocket Launcher (MRL)</label>
+                <label>MRL</label>
                 <input type="range" id="mrl" min="0" max="50" value="0">
                 <span id="mrlValue">0</span>
             </div>
 
             <div class="unit-container">
                 <img src="https://raw.githubusercontent.com/CONWORLDSOFFICIAL/CON-WORLDS-Unit-Selection/main/tds.png" alt="TDS">
-                <label>Theater Defense System (TDS)</label>
+                <label>TDS</label>
                 <input type="range" id="tds" min="0" max="50" value="0">
                 <span id="tdsValue">0</span>
             </div>
 
             <div class="unit-container">
                 <img src="https://raw.githubusercontent.com/CONWORLDSOFFICIAL/CON-WORLDS-Unit-Selection/main/ah.png" alt="AH">
-                <label>Attack Helicopter (AH)</label>
+                <label>AH</label>
                 <input type="range" id="ah" min="0" max="50" value="0">
                 <span id="ahValue">0</span>
             </div>
@@ -121,6 +121,8 @@
         document.getElementById("unitForm").addEventListener("submit", async function(event) {
             event.preventDefault();
 
+            console.log("🔥 Form submitted! Checking resource limits...");
+
             const usedElectronics = parseInt(document.getElementById("usedElectronics").innerText);
             const usedSupplies = parseInt(document.getElementById("usedSupplies").innerText);
             const usedComponents = parseInt(document.getElementById("usedComponents").innerText);
@@ -128,28 +130,37 @@
             if (usedElectronics > 40000 || usedSupplies > 40000 || usedComponents > 40000) {
                 document.getElementById("warning").innerText = "Error: Resource limit exceeded!";
                 document.getElementById("warning").style.color = "red";
+                console.error("❌ Submission blocked: Resource limit exceeded.");
                 return;
             }
 
-            await addDoc(collection(db, "submissions"), {
-                discord: document.getElementById("discord").value,
-                username: document.getElementById("username").value,
-                sasf: parseInt(document.getElementById("sasf").value),
-                mrl: parseInt(document.getElementById("mrl").value),
-                tds: parseInt(document.getElementById("tds").value),
-                ah: parseInt(document.getElementById("ah").value),
-                usedElectronics,
-                usedSupplies,
-                usedComponents,
-                timestamp: serverTimestamp()
-            });
+            console.log("✅ Resource limits okay. Sending to Firestore...");
 
-            document.getElementById("warning").innerText = "Submission successful!";
-            document.getElementById("warning").style.color = "green";
+            try {
+                await addDoc(collection(db, "submissions"), {
+                    discord: document.getElementById("discord").value,
+                    username: document.getElementById("username").value,
+                    sasf: parseInt(document.getElementById("sasf").value),
+                    mrl: parseInt(document.getElementById("mrl").value),
+                    tds: parseInt(document.getElementById("tds").value),
+                    ah: parseInt(document.getElementById("ah").value),
+                    usedElectronics,
+                    usedSupplies,
+                    usedComponents,
+                    timestamp: serverTimestamp()
+                });
+
+                console.log("✅ Data successfully sent to Firestore!");
+                document.getElementById("warning").innerText = "Submission successful!";
+                document.getElementById("warning").style.color = "green";
+            } catch (error) {
+                console.error("❌ Firestore error:", error);
+                document.getElementById("warning").innerText = "Error saving data.";
+                document.getElementById("warning").style.color = "red";
+            }
         });
 
     </script>
 
 </body>
 </html>
-
