@@ -66,7 +66,7 @@
     <p id="warning" class="warning"></p>
 
     <!-- Firebase SDK -->
-     <script type="module">
+    <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
@@ -79,6 +79,7 @@
           appId: "1:1056963708496:web:09c7e564bc2d06ed4ef355",
           measurementId: "G-P7TXFN0PDQ"
         };
+
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
@@ -130,37 +131,25 @@
                 return;
             }
 
-            const discord = document.getElementById("discord").value;
-            const username = document.getElementById("username").value;
-            const sasf = parseInt(document.getElementById("sasf").value);
-            const mrl = parseInt(document.getElementById("mrl").value);
-            const tds = parseInt(document.getElementById("tds").value);
-            const ah = parseInt(document.getElementById("ah").value);
+            await addDoc(collection(db, "submissions"), {
+                discord: document.getElementById("discord").value,
+                username: document.getElementById("username").value,
+                sasf: parseInt(document.getElementById("sasf").value),
+                mrl: parseInt(document.getElementById("mrl").value),
+                tds: parseInt(document.getElementById("tds").value),
+                ah: parseInt(document.getElementById("ah").value),
+                usedElectronics,
+                usedSupplies,
+                usedComponents,
+                timestamp: serverTimestamp()
+            });
 
-            try {
-                await addDoc(collection(db, "submissions"), {
-                    discord: discord,
-                    username: username,
-                    sasf: sasf,
-                    mrl: mrl,
-                    tds: tds,
-                    ah: ah,
-                    usedElectronics: usedElectronics,
-                    usedSupplies: usedSupplies,
-                    usedComponents: usedComponents,
-                    timestamp: serverTimestamp()
-                });
-
-                document.getElementById("warning").innerText = "Submission successful!";
-                document.getElementById("warning").style.color = "green";
-            } catch (error) {
-                console.error("Error adding document:", error);
-                document.getElementById("warning").innerText = "Error saving data.";
-                document.getElementById("warning").style.color = "red";
-            }
+            document.getElementById("warning").innerText = "Submission successful!";
+            document.getElementById("warning").style.color = "green";
         });
 
     </script>
+
 </body>
 </html>
 
