@@ -21,28 +21,28 @@
 
         <!-- Unit Selection -->
         <div class="unit-container">
-            <img src="https://github.com/CONWORLDSOFFICIAL/CON-WORLDS-Unit-Selection/blob/main/sasf.png" alt="SASF">
+            <img src="https://raw.githubusercontent.com/CONWORLDSOFFICIAL/CON-WORLDS-Unit-Selection/refs/heads/main/sasf.png" alt="SASF">
             <label>Stealth Air Superiority Fighter (SASF)</label>
             <input type="range" id="sasf" min="0" max="25" value="0" oninput="updateResources()">
             <span id="sasfValue">0</span>
         </div>
 
         <div class="unit-container">
-            <img src="https://github.com/CONWORLDSOFFICIAL/CON-WORLDS-Unit-Selection/blob/main/mrl.png" alt="MRL">
+            <img src="https://raw.githubusercontent.com/CONWORLDSOFFICIAL/CON-WORLDS-Unit-Selection/refs/heads/main/mrl.png" alt="MRL">
             <label>Multiple Rocket Launcher (MRL)</label>
             <input type="range" id="mrl" min="0" max="25" value="0" oninput="updateResources()">
             <span id="mrlValue">0</span>
         </div>
 
         <div class="unit-container">
-            <img src="https://github.com/CONWORLDSOFFICIAL/CON-WORLDS-Unit-Selection/blob/main/tds.png" alt="TDS">
+            <img src="https://raw.githubusercontent.com/CONWORLDSOFFICIAL/CON-WORLDS-Unit-Selection/refs/heads/main/tds.png" alt="TDS">
             <label>Theater Defense System (TDS)</label>
             <input type="range" id="tds" min="0" max="25" value="0" oninput="updateResources()">
             <span id="tdsValue">0</span>
         </div>
 
         <div class="unit-container">
-            <img src="https://github.com/CONWORLDSOFFICIAL/CON-WORLDS-Unit-Selection/blob/main/ah.png" alt="AH">
+            <img src="https://raw.githubusercontent.com/CONWORLDSOFFICIAL/CON-WORLDS-Unit-Selection/refs/heads/main/ah.png" alt="AH">
             <label>Attack Helicopter (AH)</label>
             <input type="range" id="ah" min="0" max="25" value="0" oninput="updateResources()">
             <span id="ahValue">0</span>
@@ -81,6 +81,7 @@
         const db = getFirestore(app);
 
         // Function to update live resource tracking
+// Function to update live resource tracking
         function updateResources() {
             const unitCosts = {
                 sasf: { electronics: 1600, components: 1500, supplies: 0 },
@@ -88,29 +89,29 @@
                 tds: { electronics: 900, components: 0, supplies: 1500 },
                 ah: { electronics: 750, components: 900, supplies: 0 }
             };
-
+        
             const sasf = parseInt(document.getElementById("sasf").value);
             const mrl = parseInt(document.getElementById("mrl").value);
             const tds = parseInt(document.getElementById("tds").value);
             const ah = parseInt(document.getElementById("ah").value);
-
+        
             document.getElementById("sasfValue").innerText = sasf;
             document.getElementById("mrlValue").innerText = mrl;
             document.getElementById("tdsValue").innerText = tds;
             document.getElementById("ahValue").innerText = ah;
-
+        
             document.getElementById("usedElectronics").innerText =
                 sasf * unitCosts.sasf.electronics +
                 mrl * unitCosts.mrl.electronics +
                 tds * unitCosts.tds.electronics +
                 ah * unitCosts.ah.electronics;
-
+        
             document.getElementById("usedSupplies").innerText =
                 sasf * unitCosts.sasf.supplies +
                 mrl * unitCosts.mrl.supplies +
                 tds * unitCosts.tds.supplies +
                 ah * unitCosts.ah.supplies;
-
+        
             document.getElementById("usedComponents").innerText =
                 sasf * unitCosts.sasf.components +
                 mrl * unitCosts.mrl.components +
@@ -118,19 +119,63 @@
                 ah * unitCosts.ah.components;
         }
 
+
         document.getElementById("unitForm").addEventListener("submit", async function(event) {
             event.preventDefault();
-            await addDoc(collection(db, "submissions"), {
-                discord: document.getElementById("discord").value,
-                username: document.getElementById("username").value,
-                sasf: parseInt(document.getElementById("sasf").value),
-                mrl: parseInt(document.getElementById("mrl").value),
-                tds: parseInt(document.getElementById("tds").value),
-                ah: parseInt(document.getElementById("ah").value),
-                timestamp: serverTimestamp()
-            });
-            document.getElementById("warning").innerText = "Submission successful!";
+        
+            const discord = document.getElementById("discord").value;
+            const username = document.getElementById("username").value;
+            const sasf = parseInt(document.getElementById("sasf").value);
+            const mrl = parseInt(document.getElementById("mrl").value);
+            const tds = parseInt(document.getElementById("tds").value);
+            const ah = parseInt(document.getElementById("ah").value);
+        
+            const unitCosts = {
+                sasf: { electronics: 1600, components: 1500, supplies: 0 },
+                mrl: { electronics: 800, components: 0, supplies: 1500 },
+                tds: { electronics: 900, components: 0, supplies: 1500 },
+                ah: { electronics: 750, components: 900, supplies: 0 }
+            };
+        
+            const usedElectronics =
+                sasf * unitCosts.sasf.electronics +
+                mrl * unitCosts.mrl.electronics +
+                tds * unitCosts.tds.electronics +
+                ah * unitCosts.ah.electronics;
+        
+            const usedSupplies =
+                sasf * unitCosts.sasf.supplies +
+                mrl * unitCosts.mrl.supplies +
+                tds * unitCosts.tds.supplies +
+                ah * unitCosts.ah.supplies;
+        
+            const usedComponents =
+                sasf * unitCosts.sasf.components +
+                mrl * unitCosts.mrl.components +
+                tds * unitCosts.tds.components +
+                ah * unitCosts.ah.components;
+        
+            try {
+                await addDoc(collection(db, "submissions"), {
+                    discord: discord,
+                    username: username,
+                    sasf: sasf,
+                    mrl: mrl,
+                    tds: tds,
+                    ah: ah,
+                    usedElectronics: usedElectronics,
+                    usedSupplies: usedSupplies,
+                    usedComponents: usedComponents,
+                    timestamp: serverTimestamp()
+                });
+        
+                document.getElementById("warning").innerText = "Submission successful!";
+            } catch (error) {
+                console.error("Error adding document:", error);
+                document.getElementById("warning").innerText = "Error saving data.";
+            }
         });
+
 
     </script>
 
