@@ -23,28 +23,28 @@
         <div class="unit-container">
             <img src="https://raw.githubusercontent.com/CONWORLDSOFFICIAL/CON-WORLDS-Unit-Selection/main/sasf.png" alt="SASF">
             <label>Stealth Air Superiority Fighter (SASF)</label>
-            <input type="range" id="sasf" min="0" max="25" value="0">
+            <input type="range" id="sasf" min="0" max="50" value="0">
             <span id="sasfValue">0</span>
         </div>
 
         <div class="unit-container">
             <img src="https://raw.githubusercontent.com/CONWORLDSOFFICIAL/CON-WORLDS-Unit-Selection/main/mrl.png" alt="MRL">
             <label>Multiple Rocket Launcher (MRL)</label>
-            <input type="range" id="mrl" min="0" max="25" value="0">
+            <input type="range" id="mrl" min="0" max="50" value="0">
             <span id="mrlValue">0</span>
         </div>
 
         <div class="unit-container">
             <img src="https://raw.githubusercontent.com/CONWORLDSOFFICIAL/CON-WORLDS-Unit-Selection/main/tds.png" alt="TDS">
             <label>Theater Defense System (TDS)</label>
-            <input type="range" id="tds" min="0" max="25" value="0">
+            <input type="range" id="tds" min="0" max="50" value="0">
             <span id="tdsValue">0</span>
         </div>
 
         <div class="unit-container">
             <img src="https://raw.githubusercontent.com/CONWORLDSOFFICIAL/CON-WORLDS-Unit-Selection/main/ah.png" alt="AH">
             <label>Attack Helicopter (AH)</label>
-            <input type="range" id="ah" min="0" max="25" value="0">
+            <input type="range" id="ah" min="0" max="50" value="0">
             <span id="ahValue">0</span>
         </div>
 
@@ -69,13 +69,13 @@
         import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
-            apiKey: "AIzaSyArxYCguc3tHkx_R25E1l8aPffnDZjgodE",
-            authDomain: "con-worlds-unit-selection.firebaseapp.com",
-            projectId: "con-worlds-unit-selection",
-            storageBucket: "con-worlds-unit-selection.appspot.com",
-            messagingSenderId: "1056963708496",
-            appId: "1:1056963708496:web:09c7e564bc2d06ed4ef355",
-            measurementId: "G-P7TXFN0PDQ"
+          apiKey: "AIzaSyArxYCguc3tHkx_R25E1l8aPffnDZjgodE",
+          authDomain: "con-worlds-unit-selection.firebaseapp.com",
+          projectId: "con-worlds-unit-selection",
+          storageBucket: "con-worlds-unit-selection.firebasestorage.app",
+          messagingSenderId: "1056963708496",
+          appId: "1:1056963708496:web:09c7e564bc2d06ed4ef355",
+          measurementId: "G-P7TXFN0PDQ"
         };
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
@@ -94,11 +94,13 @@
             const tds = parseInt(document.getElementById("tds").value);
             const ah = parseInt(document.getElementById("ah").value);
 
+            // Update slider values
             document.getElementById("sasfValue").innerText = sasf;
             document.getElementById("mrlValue").innerText = mrl;
             document.getElementById("tdsValue").innerText = tds;
             document.getElementById("ahValue").innerText = ah;
 
+            // Update resource usage
             document.getElementById("usedElectronics").innerText =
                 sasf * unitCosts.sasf.electronics +
                 mrl * unitCosts.mrl.electronics +
@@ -118,29 +120,13 @@
                 ah * unitCosts.ah.components;
         }
 
-        // Attach event listeners to update UI when sliders are moved
+        // Attach event listeners to sliders **AFTER** defining updateResources()
         document.querySelectorAll("input[type=range]").forEach(slider => {
             slider.addEventListener("input", updateResources);
         });
 
-        document.getElementById("unitForm").addEventListener("submit", async function(event) {
-            event.preventDefault();
-
-            await addDoc(collection(db, "submissions"), {
-                discord: document.getElementById("discord").value,
-                username: document.getElementById("username").value,
-                sasf: parseInt(document.getElementById("sasf").value),
-                mrl: parseInt(document.getElementById("mrl").value),
-                tds: parseInt(document.getElementById("tds").value),
-                ah: parseInt(document.getElementById("ah").value),
-                timestamp: serverTimestamp()
-            });
-
-            document.getElementById("warning").innerText = "Submission successful!";
-        });
     </script>
 
 </body>
 </html>
-
 
