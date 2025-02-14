@@ -66,7 +66,7 @@
     <p id="warning" class="warning"></p>
 
     <!-- Firebase SDK -->
-    <script type="module">
+     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
@@ -79,7 +79,6 @@
           appId: "1:1056963708496:web:09c7e564bc2d06ed4ef355",
           measurementId: "G-P7TXFN0PDQ"
         };
-
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
@@ -121,20 +120,47 @@
         document.getElementById("unitForm").addEventListener("submit", async function(event) {
             event.preventDefault();
 
-            if (parseInt(document.getElementById("usedElectronics").innerText) > 40000 ||
-                parseInt(document.getElementById("usedSupplies").innerText) > 40000 ||
-                parseInt(document.getElementById("usedComponents").innerText) > 40000) {
+            const usedElectronics = parseInt(document.getElementById("usedElectronics").innerText);
+            const usedSupplies = parseInt(document.getElementById("usedSupplies").innerText);
+            const usedComponents = parseInt(document.getElementById("usedComponents").innerText);
+
+            if (usedElectronics > 40000 || usedSupplies > 40000 || usedComponents > 40000) {
                 document.getElementById("warning").innerText = "Error: Resource limit exceeded!";
                 document.getElementById("warning").style.color = "red";
                 return;
             }
 
-            document.getElementById("warning").innerText = "Submission successful!";
-            document.getElementById("warning").style.color = "green";
+            const discord = document.getElementById("discord").value;
+            const username = document.getElementById("username").value;
+            const sasf = parseInt(document.getElementById("sasf").value);
+            const mrl = parseInt(document.getElementById("mrl").value);
+            const tds = parseInt(document.getElementById("tds").value);
+            const ah = parseInt(document.getElementById("ah").value);
+
+            try {
+                await addDoc(collection(db, "submissions"), {
+                    discord: discord,
+                    username: username,
+                    sasf: sasf,
+                    mrl: mrl,
+                    tds: tds,
+                    ah: ah,
+                    usedElectronics: usedElectronics,
+                    usedSupplies: usedSupplies,
+                    usedComponents: usedComponents,
+                    timestamp: serverTimestamp()
+                });
+
+                document.getElementById("warning").innerText = "Submission successful!";
+                document.getElementById("warning").style.color = "green";
+            } catch (error) {
+                console.error("Error adding document:", error);
+                document.getElementById("warning").innerText = "Error saving data.";
+                document.getElementById("warning").style.color = "red";
+            }
         });
 
     </script>
-
 </body>
 </html>
 
