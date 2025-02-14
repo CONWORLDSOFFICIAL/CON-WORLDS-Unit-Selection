@@ -9,49 +9,55 @@
 <body>
 
     <h1>Military Unit Selection</h1>
-    
+
     <form id="unitForm">
-        <label for="sasf">Stealth Air Superiority Fighter (SASF):</label>
-        <select id="sasf" name="sasf">
-            <option value="0">0</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-        </select>
         
-        <label for="mrl">Multiple Rocket Launcher (MRL):</label>
-        <select id="mrl" name="mrl">
-            <option value="0">0</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-        </select>
+        <!-- User Input -->
+        <label for="discord">Discord Name:</label>
+        <input type="text" id="discord" name="discord" placeholder="Your Discord Name" required>
 
-        <label for="tds">Theater Defense System (TDS):</label>
-        <select id="tds" name="tds">
-            <option value="0">0</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-        </select>
+        <label for="username">In-Game Username:</label>
+        <input type="text" id="username" name="username" placeholder="Your Game Name" required>
 
-        <label for="ah">Attack Helicopter (AH):</label>
-        <select id="ah" name="ah">
-            <option value="0">0</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-        </select>
+        <!-- Unit Selection -->
+        <div class="unit-container">
+            <img src="https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/sasf.png" alt="SASF">
+            <label>Stealth Air Superiority Fighter (SASF)</label>
+            <input type="range" id="sasf" min="0" max="25" value="0" oninput="updateResources()">
+            <span id="sasfValue">0</span>
+        </div>
 
-        <br><br>
+        <div class="unit-container">
+            <img src="https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/mrl.png" alt="MRL">
+            <label>Multiple Rocket Launcher (MRL)</label>
+            <input type="range" id="mrl" min="0" max="25" value="0" oninput="updateResources()">
+            <span id="mrlValue">0</span>
+        </div>
+
+        <div class="unit-container">
+            <img src="https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/tds.png" alt="TDS">
+            <label>Theater Defense System (TDS)</label>
+            <input type="range" id="tds" min="0" max="25" value="0" oninput="updateResources()">
+            <span id="tdsValue">0</span>
+        </div>
+
+        <div class="unit-container">
+            <img src="https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/ah.png" alt="AH">
+            <label>Attack Helicopter (AH)</label>
+            <input type="range" id="ah" min="0" max="25" value="0" oninput="updateResources()">
+            <span id="ahValue">0</span>
+        </div>
+
+        <!-- Live Resource Tracker -->
+        <h2>Resource Usage</h2>
+        <table>
+            <tr><th>Resource</th><th>Used</th><th>Limit</th></tr>
+            <tr><td>Electronics</td><td id="usedElectronics">0</td><td>40000</td></tr>
+            <tr><td>Supplies</td><td id="usedSupplies">0</td><td>40000</td></tr>
+            <tr><td>Components</td><td id="usedComponents">0</td><td>40000</td></tr>
+        </table>
+
+        <br>
         <button type="submit">Submit</button>
     </form>
 
@@ -62,47 +68,62 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // Firebase Configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyArxYCguc3tHkx_R25E1l8aPffnDZjgodE",
-            authDomain: "con-worlds-unit-selection.firebaseapp.com",
-            projectId: "con-worlds-unit-selection",
-            storageBucket: "con-worlds-unit-selection.appspot.com",
-            messagingSenderId: "1056963708496",
-            appId: "1:1056963708496:web:09c7e564bc2d06ed4ef355",
-            measurementId: "G-P7TXFN0PDQ"
-        };
-
-        // Initialize Firebase
+        const firebaseConfig = { /* YOUR FIREBASE CONFIG HERE */ };
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Handle form submission
-        document.getElementById("unitForm").addEventListener("submit", async function(event) {
-            event.preventDefault();
+        // Function to update live resource tracking
+        function updateResources() {
+            const unitCosts = {
+                sasf: { electronics: 1600, components: 1500, supplies: 0 },
+                mrl: { electronics: 800, components: 0, supplies: 1500 },
+                tds: { electronics: 900, components: 0, supplies: 1500 },
+                ah: { electronics: 750, components: 900, supplies: 0 }
+            };
 
             const sasf = parseInt(document.getElementById("sasf").value);
             const mrl = parseInt(document.getElementById("mrl").value);
             const tds = parseInt(document.getElementById("tds").value);
             const ah = parseInt(document.getElementById("ah").value);
 
-            try {
-                // Send data to Firestore
-                await addDoc(collection(db, "submissions"), {
-                    timestamp: serverTimestamp(),
-                    sasf: sasf,
-                    mrl: mrl,
-                    tds: tds,
-                    ah: ah
-                });
+            document.getElementById("sasfValue").innerText = sasf;
+            document.getElementById("mrlValue").innerText = mrl;
+            document.getElementById("tdsValue").innerText = tds;
+            document.getElementById("ahValue").innerText = ah;
 
-                document.getElementById("warning").innerText = "Submission successful!";
-                console.log("Data added successfully!");
-            } catch (error) {
-                document.getElementById("warning").innerText = "Error saving data.";
-                console.error("Error adding document:", error);
-            }
+            document.getElementById("usedElectronics").innerText =
+                sasf * unitCosts.sasf.electronics +
+                mrl * unitCosts.mrl.electronics +
+                tds * unitCosts.tds.electronics +
+                ah * unitCosts.ah.electronics;
+
+            document.getElementById("usedSupplies").innerText =
+                sasf * unitCosts.sasf.supplies +
+                mrl * unitCosts.mrl.supplies +
+                tds * unitCosts.tds.supplies +
+                ah * unitCosts.ah.supplies;
+
+            document.getElementById("usedComponents").innerText =
+                sasf * unitCosts.sasf.components +
+                mrl * unitCosts.mrl.components +
+                tds * unitCosts.tds.components +
+                ah * unitCosts.ah.components;
+        }
+
+        document.getElementById("unitForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+            await addDoc(collection(db, "submissions"), {
+                discord: document.getElementById("discord").value,
+                username: document.getElementById("username").value,
+                sasf: parseInt(document.getElementById("sasf").value),
+                mrl: parseInt(document.getElementById("mrl").value),
+                tds: parseInt(document.getElementById("tds").value),
+                ah: parseInt(document.getElementById("ah").value),
+                timestamp: serverTimestamp()
+            });
+            document.getElementById("warning").innerText = "Submission successful!";
         });
+
     </script>
 
 </body>
